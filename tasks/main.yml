@@ -197,6 +197,7 @@
   tags:
     - octavia-install
     - octavia-config
+    - octavia-policy-override
 
 - import_tasks: octavia_amp_image.yml
   run_once: true
