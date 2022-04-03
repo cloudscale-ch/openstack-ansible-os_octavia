@@ -27,10 +27,7 @@
 - name: Create developer mode constraint file
   copy:
     dest: "/opt/developer-pip-constraints.txt"
-    content: |
-      {% for item in octavia_developer_constraints %}
-      {{ item }}
-      {% endfor %}
+    content: "{{ octavia_developer_constraints }}\n"
   when: octavia_developer_mode | bool
 
 - name: Retrieve checksum for venv download
