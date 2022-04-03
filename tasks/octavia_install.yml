@@ -68,15 +68,33 @@
     - octavia_get_venv is changed or octavia_venv_dir is changed
   notify: Restart octavia services
 
+- name: Update pip
+  pip:
+    name: "pip"
+    state: "latest"
+    virtualenv: "{{ octavia_bin | dirname }}"
+    virtualenv_site_packages: "no"
+    virtualenv_python: "/usr/bin/python3"
+    extra_args: >-
+      {{ octavia_developer_mode | ternary(pip_install_developer_constraints | default('--constraint /opt/developer-pip-constraints.txt'), '') }}
+      --index-url https://pypi.org/simple/
+      {{ pip_install_options | default('') }}
+  register: install_pip
+  until: install_pip is success
+  retries: 5
+  delay: 2
+  when: octavia_developer_mode | bool
+
 - name: Install pip packages
   pip:
     name: "{{ octavia_pip_packages }}"
     state: "{{ octavia_pip_package_state }}"
     virtualenv: "{{ octavia_bin | dirname }}"
     virtualenv_site_packages: "no"
+    virtualenv_python: "/usr/bin/python3"
     extra_args: >-
       {{ octavia_developer_mode | ternary(pip_install_developer_constraints | default('--constraint /opt/developer-pip-constraints.txt'), '') }}
-      {{ (pip_install_upper_constraints is defined) | ternary('--constraint ' + pip_install_upper_constraints | default(''),'') }}
+      --index-url https://pypi.org/simple/
       {{ pip_install_options | default('') }}
   register: install_packages
   until: install_packages is success
