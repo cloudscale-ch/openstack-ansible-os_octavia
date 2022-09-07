@@ -155,6 +155,11 @@ octavia_pip_packages:
   - shade
   - uwsgi
 
+# Forces repo_build to not scan this file for pip dependencies. Note, this
+# is not a variable that you can meaningfully override on any other level, nor
+# can variables be used for it. It might as well be a comment.
+repo_build_skip: True
+
 octavia_optional_oslomsg_amqp1_pip_packages:
   - oslo.messaging[amqp1]
 
