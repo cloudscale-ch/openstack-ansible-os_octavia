@@ -85,6 +85,24 @@
   delay: 2
   when: octavia_developer_mode | bool
 
+- name: Check Octavia version installed
+  shell: "{{ octavia_bin | dirname }}/bin/pip freeze | grep --quiet '^octavia @ git+{{ octavia_git_repo }}@{{ octavia_git_install_branch }}$'"
+  failed_when: octavia_installed_version.rc not in [0,1]
+  check_mode: False
+  changed_when: False
+  register: octavia_installed_version
+  when: octavia_developer_mode | bool
+
+- name: Uninstall Octavia before reinstall
+  pip:
+    name: "octavia"
+    state: "absent"
+    virtualenv: "{{ octavia_bin | dirname }}"
+    virtualenv_python: "/usr/bin/python3"
+  when:
+    - octavia_developer_mode | bool
+    - octavia_installed_version.rc == 1
+
 - name: Install pip packages
   pip:
     name: "{{ octavia_pip_packages }}"
