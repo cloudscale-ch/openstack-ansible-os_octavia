@@ -42,6 +42,13 @@
   tags:
     - octavia-install
 
+- name: Check Octavia version installed
+  shell: "{{ octavia_bin | dirname }}/bin/pip freeze | grep --quiet '^octavia @ git+{{ octavia_git_repo }}@{{ octavia_git_install_branch }}$'"
+  failed_when: octavia_installed_version.rc not in [0,1]
+  check_mode: False
+  changed_when: False
+  register: octavia_installed_version
+
 - name: Install the python venv
   import_role:
     name: "python_venv_build"
@@ -51,6 +58,7 @@
     venv_install_distro_package_list: "{{ octavia_distro_packages }}"
     venv_pip_install_args: "{{ octavia_pip_install_args }}"
     venv_python_executable: "python3"
+    venv_rebuild: octavia_installed_version.rc == 1
     venv_pip_packages: "{{ octavia_pip_packages | union(octavia_user_pip_packages) +
     (octavia_oslomsg_amqp1_enabled | bool) | ternary(octavia_optional_oslomsg_amqp1_pip_packages, []) }}"
     venv_facts_when_changed:
