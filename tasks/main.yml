@@ -58,6 +58,7 @@
     venv_install_distro_package_list: "{{ octavia_distro_packages }}"
     venv_pip_install_args: "{{ octavia_pip_install_args }}"
     venv_python_executable: "python3"
+    venv_build_host_venv_path: "/openstack/venvs/wheel-builder-python3"
     venv_rebuild: octavia_installed_version.rc == 1
     venv_pip_packages: "{{ octavia_pip_packages | union(octavia_user_pip_packages) +
     (octavia_oslomsg_amqp1_enabled | bool) | ternary(octavia_optional_oslomsg_amqp1_pip_packages, []) }}"
